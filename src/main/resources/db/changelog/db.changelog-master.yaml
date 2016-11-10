@@ -1,0 +1,112 @@
+databaseChangeLog:
+  - preConditions:
+    - runningAs:
+        username: SA
+  - changeSet:
+      id: 1
+      author: rjung
+      preconditions:
+        not:
+          tableExists:
+            tableName: messages
+      changes:
+        - createTable:
+            tableName: messages
+            columns:
+              - column:
+                  name: id
+                  type: varchar(36)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: type
+                  type: varchar(8)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: body
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+        - createIndex:
+            tableName: messages
+            name: messages_created_ind
+            columns:
+              - column:
+                  name: created_at
+  - changeSet:
+      id: 2
+      author: rjung
+      preconditions:
+        not:
+          tableExists:
+            tableName: tags
+      changes:
+        - createTable:
+            tableName: tags
+            columns:
+              - column:
+                  name: id
+                  type: integer
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(16)
+                  constraints:
+                    nullable: false
+        - createIndex:
+            tableName: tags
+            name: tags_name_ind
+            columns:
+              - column:
+                  name: name
+                  constraints:
+                    unique: true
+  - changeSet:
+      id: 3
+      author: rjung
+      preconditions:
+        not:
+          tableExists:
+            tableName: messages_tags
+      changes:
+        - createTable:
+            tableName: messages_tags
+            columns:
+              - column:
+                  name: message_id
+                  type: varchar(36)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: tag_id
+                  type: integer
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+        - addForeignKeyConstraint:
+            constraintName: messages_tags_messages_fk
+            baseTableName: messages_tags
+            baseColumnNames: message_id
+            referencedTableName: messages
+            referencedColumnNames: id
+            onDelete: cascade
+            onUpdate: cascade
+        - addForeignKeyConstraint:
+            constraintName: messages_tags_tags_fk
+            baseTableName: messages_tags
+            baseColumnNames: tag_id
+            referencedTableName: tags
+            referencedColumnNames: id
+            onDelete: cascade
+            onUpdate: cascade
