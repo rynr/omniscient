@@ -1,0 +1,6 @@
+{
+  "name": "Omniscient",
+  "tagline": "Log everything",
+  "body": "omniscient\r\n==========\r\n\r\nOmniscient is a service to store anything that you could need to remember later.\r\nIt provides all data in a simple flat-file structure so that you can easily export it or import other data.\r\n\r\nThe status is pretty early, so if you're interested see on how to run it.\r\n\r\nrun\r\n---\r\n\r\n    ./mvn spring-boot:run\r\n    open http://localhost:8080/\r\n\r\nlinks\r\n-----\r\n\r\n",
+  "note": "Don't delete this file! It's used internally to help with page regeneration."
+}
