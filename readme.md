@@ -16,4 +16,6 @@ links
 -----
 
  - [Sources](https://github.com/rynr/omniscient)
+ - [Issues](https://github.com/rynr/omniscient/issues)
  - [![Build Status](https://travis-ci.org/rynr/omniscient.svg?branch=master)](https://travis-ci.org/rynr/omniscient)
+ - [![SonarQube Tech Debt](https://img.shields.io/sonar/http/sonarqube.com/org.rjung.service:omniscient/tech_debt.svg)](https://sonarqube.com/dashboard?id=org.rjung.service%3Aomniscient)
