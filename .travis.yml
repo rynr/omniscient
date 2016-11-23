@@ -2,3 +2,10 @@ language: java
 jdk:
   - oraclejdk8
 sudo: false
+addons:
+  sonarqube: true
+env:
+  global:
+    secure: "tVyjfQ3ohOLaIM4Y6X2ZgQvb3OeZt+8in6quCsCUHCAGz0r92NLAjwRpfE2QwUBa6xTJRdvj+vtDMa3vYJgwmec5oQ/vD5hS5zCXJPU4LDPOS0agFAep9pABBZSWbgvA7To48pG306c4S4RIc+JNn8GueS0mm+VojpxFogHWuuf7FI22r/sajHRJ3JCeok4YcoMEhlB2y1ki3xrCeuIqZnxmyBshgfeZZd73Fcsilxn844O00o0/oC/rUPJoCvy8IXZjWMCzHn7z3ApDRVUE9byQVW1zocU1sVJdcIz2TzEdyNv8YV3/InLHxR9lllrxLMRqrM7YRlxidXsPu4yav5qMIVf3BEjANvrB9vfzEebr6sCBX4CmcK/7rEMgXfeYsj6nIBkvSQO08/9bKUwgpEdEQaQN2XSbWWgbDFuUoGqEQHX4JZZrMDgmGaKmC8bqWho20smPty8ZcvexMVERuSEFnsCYB2MaWl4MmZOOXy89MNALyo3Ptv/JYg6VSX4Xc2w2+u+zd8Ty7F5M4BFpveFIRk8Bp0igBx75Atg12vtuXo+nUVO1e/fhp+NTi5jFmYRE8jEGkILX0eZF0s4x5eSkoRjd292TBYTeklXmQybyjxANjst3NgHmIeCpU9R5Yqz9S8veHKRjtKmGPDpNAiSY6nGQkWxTmcQHICDD8Ws="
+script:
+  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar -Dsonar.host.url=https://sonarqube.com -Dsonar.login=$SONAR_TOKEN
