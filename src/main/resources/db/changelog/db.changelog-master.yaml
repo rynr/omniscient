@@ -20,6 +20,11 @@ databaseChangeLog:
                     primaryKey: true
                     nullable: false
               - column:
+                  name: user
+                  type: varchar(39)
+                  constraints:
+                    nullable: false
+              - column:
                   name: created_at
                   type: bigint
                   constraints:

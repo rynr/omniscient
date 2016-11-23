@@ -10,6 +10,7 @@ import java.time.ZoneOffset;
 public class MessageDTO {
 
     private final String id;
+    private final String user;
     private final long createdAt;
     private final String type;
     private final String content;
@@ -31,8 +32,9 @@ public class MessageDTO {
      * @param content
      *            The textual content of the message.
      */
-    public MessageDTO(String id, long createdAt, String type, String content) {
+    public MessageDTO(String id, String user, long createdAt, String type, String content) {
         this.id = id;
+        this.user = user;
         this.createdAt = createdAt;
         this.type = type;
         this.content = content;
@@ -44,8 +46,9 @@ public class MessageDTO {
      * @param message
      *            The Message to be built as {@link MessageDTO}.
      */
-    public MessageDTO(Message message) {
+    public MessageDTO(Message message, String user) {
         this.id = message.getId().toString();
+        this.user = user;
         this.createdAt = message.getCreatedAt().toEpochSecond(ZoneOffset.UTC);
         this.type = message.getType().name();
         this.content = message.getContent();
@@ -59,6 +62,15 @@ public class MessageDTO {
      */
     public String getId() {
         return id;
+    }
+
+    /**
+     * Retrieve the <tt>username</tt> of the {@link MessageDTO}.
+     *
+     * @return The <tt>username</tt> of the {@link MessageDTO}.
+     */
+    public String getUser() {
+        return user;
     }
 
     /**

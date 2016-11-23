@@ -1,5 +1,6 @@
 package org.rjung.service.message;
 
+import java.security.Principal;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -81,9 +82,11 @@ public class MessageController {
      *         the <tt>location</tt>-header.
      */
     @RequestMapping(value = "/messages", method = RequestMethod.POST, consumes = MediaType.TEXT_PLAIN_VALUE)
-    public ResponseEntity<Void> postMessage(@RequestBody String source, UriComponentsBuilder urlBuilder) {
+    public ResponseEntity<Void> postMessage(@RequestBody String source, UriComponentsBuilder urlBuilder,
+            Principal principal) {
         HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(urlBuilder.path("/messages/{id}").buildAndExpand(messages.save(source)).toUri());
+        headers.setLocation(
+                urlBuilder.path("/messages/{id}").buildAndExpand(messages.save(source, principal.getName())).toUri());
         return new ResponseEntity<>(headers, HttpStatus.CREATED);
     }
 
@@ -96,9 +99,9 @@ public class MessageController {
     }
 
     @RequestMapping(value = "/messages.html", method = RequestMethod.POST, produces = MediaType.TEXT_HTML_VALUE)
-    public RedirectView postMessageHtml(@RequestParam(name = "message") String source,
-            UriComponentsBuilder urlBuilder) {
-        messages.save(source);
+    public RedirectView postMessageHtml(@RequestParam(name = "message") String source, UriComponentsBuilder urlBuilder,
+            Principal principal) {
+        messages.save(source, principal.getName());
         return new RedirectView(urlBuilder.path("/messages.html").toUriString());
     }
 }

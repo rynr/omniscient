@@ -32,8 +32,8 @@ public class MessageDao {
      */
     public int save(MessageDTO message) {
         LOGGER.debug("save: " + message);
-        return jdbcTemplate.update("INSERT INTO messages (id, created_at, type, body) VALUES (?, ?, ?, ?)",
-                message.getId(), message.getCreatedAt(), message.getType(), message.getContent());
+        return jdbcTemplate.update("INSERT INTO messages (id, user, created_at, type, body) VALUES (?, ?, ?, ?, ?)",
+                message.getId(), message.getUser(), message.getCreatedAt(), message.getType(), message.getContent());
     }
 
     /**
@@ -50,8 +50,9 @@ public class MessageDao {
      */
     public List<MessageDTO> getMessages(int page, int limit) {
         LOGGER.debug("get messages: page " + page + ", limit " + limit);
-        return jdbcTemplate.query("SELECT id, created_at, type, body FROM messages ORDER BY created_at DESC LIMIT ?, ?",
-                new Object[] { (page - 1) * limit, limit },
-                (rs, rowNum) -> new MessageDTO(rs.getString(1), rs.getLong(2), rs.getString(3), rs.getString(4)));
+        return jdbcTemplate.query(
+                "SELECT id, user, created_at, type, body FROM messages ORDER BY created_at DESC LIMIT ?, ?",
+                new Object[] { (page - 1) * limit, limit }, (rs, rowNum) -> new MessageDTO(rs.getString(1),
+                        rs.getString(2), rs.getLong(3), rs.getString(4), rs.getString(5)));
     }
 }

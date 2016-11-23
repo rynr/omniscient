@@ -58,7 +58,7 @@ public class MessageService {
      * @return The <tt>id</tt> of the created {@link Message}. This can be used
      *         to retrieve the new {@link Message} again.
      */
-    public String save(String source) {
+    public String save(String source, String user) {
         LOGGER.debug("save: " + source);
         Message message;
         MessageType type = MessageType.getMessageType(source);
@@ -70,7 +70,7 @@ public class MessageService {
             LOGGER.debug("  type is: " + type);
             message = new Message(type, type.clearMessage(source));
         }
-        MessageDTO messageDTO = new MessageDTO(message);
+        MessageDTO messageDTO = new MessageDTO(message, user);
         messages.save(messageDTO);
         messageInterceptors.forEach(i -> i.saveMessage(messageDTO));
         return message.getId().toString();
