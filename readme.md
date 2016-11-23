@@ -15,3 +15,5 @@ run
 links
 -----
 
+ - [Sources](https://github.com/rynr/omniscient)
+ - [![Build Status](https://travis-ci.org/rynr/omniscient.svg?branch=master)](https://travis-ci.org/rynr/omniscient)
