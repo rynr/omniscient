@@ -1,7 +1,7 @@
 #%RAML 1.0
 title: omniscient
-version: 1.0
-baseUri: https://api.rjung.org/
+version: 1.0.0
+baseUri: https://api.example.com/
 
 types:
   UUID:
@@ -9,35 +9,36 @@ types:
     pattern: ^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$
     displayName: Universally Unique Identifier
   Message:
-    type: object
-    properties:
-      id:
-        type: UUID
-        required: false
-        description: |
-          Unique ID of the message.
-          This ID is needed to change the entry.
-      createdAt:
-        type: long
-        required: false
-        description: The timestamp of the creation in milliseconds since unix epoch
-      tags:
-        type: array
-        items:
-          type: string
+    type: string
+  Type:
+    enum: [Log, Info, Bookmark, Snippet, Todo, Done]
   Log:
-    type: Message
-    properties:
-      message:
-        type: string
-        description: A log entry
+    enum:
+      - ≣
+      - -
+  Info:
+    enum:
+      - ℹ
+      - i
+      - I
+  Bookmark:
+    enum:
+      - ❯
+      - >
+  Snippet:
+    enum:
+      - ¶
+      - $
   Todo:
-    type: Message
-    properties:
-      done:
-        type: boolean
-      entry:
-        type: string
+    enum:
+      - ☐
+      - "[]"
+      - "[ ]"
+  Done:
+    enum:
+      - ☑
+      - [x]
+      - [X]
   ExceptionResponse:
     type: object
     properties:
@@ -46,27 +47,16 @@ types:
       error: string
       exception: string
       message: string
-      path: STRING
+      path: string
 
-/messages:
+/messages.txt:
   get:
     queryParameters:
       page:
         type: number
         default: 1
         required: false
-        description: |
-          To be able to paginate you need to be able to request multiple pages.
-          Alternative to the page-request it's also possible to use the parameter `before`.
-          The parameters `before` and `page` can be combined.
-          to limit the number of results use the `limit` parameter.
-      before:
-        type: number
-        required: false
-        description: |
-          To be able to load messages before a defined timestamp this parameter can be used.
-          It's possible to combine this parameter with `page`.
-          To limit the number of message, the parameter `limit` can be used.
+        description: To be able to paginate you need to be able to request multiple pages.
       limit:
         type: number
         required: false
@@ -77,9 +67,10 @@ types:
         body:
           text/plain:
             example:
-              1231231412|1236|- Some log entry #tag #tag2
-              1231231412|1235|[ ] some open todo entry #tag3
-              1231231412|1234|[x] some done todo entry #tag2
+              value: |
+                4f5fca66-6f19-35a7-bd1f-ab408e9c9eac\t1480100153\t☑\tSome todo item that is done
+                24553841-fc81-3faf-a37a-d4147b6891d3\t1480100136\tℹ\tInformation
+                8bba3ca2-7e7c-3a81-977d-733ab4cdecf0\t1480100128\t☐\tSome todo item
       500:
         body:
           application/json:
@@ -89,17 +80,19 @@ types:
           application/json:
             type: ExceptionResponse
   post:
+    description: |
+      This resource-call will create a new message in the application.
+      The message is directly posted as the body.
     body:
       text/plain:
         type: string
-        example:
-          - some new log entry #tag1 #tag2
     responses:
       201:
         headers:
           Location:
+            type: string
             example:
-              value: https://api.rjung.org/messages/2ad0b043-6f3e-48c2-8108-1f7085ba7554
+              value: https://api.example.com/messages/4f5fca66-6f19-35a7-bd1f-ab408e9c9eac.txt
       400:
         body:
           application/json:
@@ -108,3 +101,15 @@ types:
         body:
           application/json:
             type: ExceptionResponse
+/messages/{id}.txt:
+  get:
+    body:
+      text/plain:
+        type: string
+    responses:
+      200:
+      500:
+      404:
+  uriParameters:
+    id:
+      type: UUID
