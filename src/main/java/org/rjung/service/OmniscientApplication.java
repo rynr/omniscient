@@ -40,11 +40,14 @@ public class OmniscientApplication extends WebSecurityConfigurerAdapter {
                 .authenticated()
             .and()
                 .logout()
+                .logoutUrl("/logout")
                 .logoutSuccessUrl("/")
+                .invalidateHttpSession(true)
                 .permitAll()
             .and()
                 .csrf()
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
         // @formatter:on
     }
+
 }

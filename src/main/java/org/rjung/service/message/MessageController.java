@@ -5,15 +5,18 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
@@ -116,5 +119,10 @@ public class MessageController {
             final UriComponentsBuilder urlBuilder, final Principal principal) {
         messages.save(source, principal);
         return new RedirectView(urlBuilder.path("/messages.html").toUriString());
+    }
+
+    @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Not Found")
+    @ExceptionHandler(EmptyResultDataAccessException.class)
+    public void notFound() {
     }
 }
