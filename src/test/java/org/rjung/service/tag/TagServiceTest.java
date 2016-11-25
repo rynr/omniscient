@@ -6,17 +6,20 @@ import static org.junit.Assert.assertThat;
 
 import java.util.Set;
 
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
+@RunWith(MockitoJUnitRunner.class)
 public class TagServiceTest {
 
-    TagService sut;
+    @Mock
+    TagDao tagDao;
 
-    @Before
-    public void setup() {
-        this.sut = new TagService();
-    }
+    @InjectMocks
+    TagService sut;
 
     @Test
     public void verifyGetTagsFromMessageWorks() {
