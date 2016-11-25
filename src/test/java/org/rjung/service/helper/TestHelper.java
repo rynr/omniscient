@@ -1,17 +1,15 @@
 package org.rjung.service.helper;
 
-import static org.mockito.Mockito.mock;
-
 import java.math.BigInteger;
+import java.security.Principal;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
+import org.apache.catalina.connector.CoyotePrincipal;
 import org.rjung.service.message.Message;
 import org.rjung.service.message.MessageDTO;
 import org.rjung.service.message.MessageType;
-import org.springframework.context.annotation.Bean;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 public class TestHelper {
 
@@ -69,8 +67,8 @@ public class TestHelper {
      * @return A random {@link MessageDTO}.
      */
     public static MessageDTO randomMessageDTO() {
-        return new MessageDTO(randomString(16), randomTime().toEpochSecond(ZoneOffset.UTC),
-                randomEnum(MessageType.values()).toString(), randomString(255));
+        return new MessageDTO(randomString(16), randomString(36), randomEnum(MessageType.values()).toString(),
+                randomString(255), randomTime().toEpochSecond(ZoneOffset.UTC));
     }
 
     /**
@@ -93,16 +91,15 @@ public class TestHelper {
         return new BigInteger(5 * length, getRandom()).toString(32);
     }
 
+    public static Principal randomPrincipal() {
+        return new CoyotePrincipal(randomString(36));
+    }
+
     private static SecureRandom getRandom() {
         if (secureRandom == null) {
             secureRandom = new SecureRandom();
         }
         return secureRandom;
-    }
-
-    @Bean
-    public JdbcTemplate getJdbcTemplate() {
-        return mock(JdbcTemplate.class);
     }
 
 }

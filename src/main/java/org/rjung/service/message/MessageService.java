@@ -1,5 +1,6 @@
 package org.rjung.service.message;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
@@ -37,16 +38,35 @@ public class MessageService {
      *            {@link Message}s. The amount of {@link Message}s is set with
      *            the parameter <tt>limit</tt>. To access further
      *            {@link Message}s, use the parameter <tt>page</tt>.
+     * @param user
+     *            The user of the {@link Message}s to be retrieved.
      * @return A list with maximum <tt>limit</tt> {@link Message}s. If none are
      *         available or the <tt>page</tt> is to high, there will be no
      *         results in the list.
      */
-    public List<Message> getMessages(int page, int limit) {
-        LOGGER.debug("get message: page " + page + ", limit " + limit);
-        return messages
-                .getMessages(page, limit).stream().map(m -> new Message(MessageType.valueOf(m.getType()),
-                        m.getContent(), LocalDateTime.ofEpochSecond(m.getCreatedAt(), 0, ZoneOffset.UTC)))
+    public List<Message> getMessages(int page, int limit, Principal user) {
+        LOGGER.debug("get message: page " + page + ", limit " + limit + ", user " + user);
+        return messages.getMessages(page, limit, user.getName()).stream()
+                .map(m -> new Message(MessageType.valueOf(m.getType()), m.getContent(),
+                        LocalDateTime.ofEpochSecond(m.getCreatedAt(), 0, ZoneOffset.UTC)))
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Get a {@link Message}s.
+     *
+     * @param id
+     *            The method will return one {@link Message} (if available) with
+     *            the given <tt>id</tt>.
+     * @param user
+     * @return The {@link Message} if available.
+     */
+    public Message getMessage(String id, Principal user) {
+        LOGGER.debug("get message: " + id);
+        MessageDTO message = messages.getMessage(id, user.getName());
+        return message == null ? null
+                : new Message(MessageType.valueOf(message.getType()), message.getContent(),
+                        LocalDateTime.ofEpochSecond(message.getCreatedAt(), 0, ZoneOffset.UTC));
     }
 
     /**
@@ -58,7 +78,7 @@ public class MessageService {
      * @return The <tt>id</tt> of the created {@link Message}. This can be used
      *         to retrieve the new {@link Message} again.
      */
-    public String save(String source, String user) {
+    public String save(String source, Principal user) {
         LOGGER.debug("save: " + source);
         Message message;
         MessageType type = MessageType.getMessageType(source);
@@ -70,7 +90,7 @@ public class MessageService {
             LOGGER.debug("  type is: " + type);
             message = new Message(type, type.clearMessage(source));
         }
-        MessageDTO messageDTO = new MessageDTO(message, user);
+        MessageDTO messageDTO = new MessageDTO(message, user.getName());
         messages.save(messageDTO);
         messageInterceptors.forEach(i -> i.saveMessage(messageDTO));
         return message.getId().toString();

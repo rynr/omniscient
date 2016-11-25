@@ -19,9 +19,9 @@ public class MessageInterceptorTagExtractionTest {
 
     @Test
     public void expectToStoreFoundTagToDao() {
-        MessageDTO message = new MessageDTO("1", 1l, "Log", "some content with some #tag");
+        MessageDTO message = new MessageDTO("1", "user", "Log", "some content with some #tag", 1l);
         sut.saveMessage(message);
-        
+
         verify(tagdao).insertTag("#tag", "1");
     }
 }

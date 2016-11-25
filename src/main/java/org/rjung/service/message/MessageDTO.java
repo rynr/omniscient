@@ -2,6 +2,7 @@ package org.rjung.service.message;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Objects;
 
 /**
  * The {@link MessageDTO} contains the data of a {@link Message} to be stored in
@@ -11,9 +12,9 @@ public class MessageDTO {
 
     private final String id;
     private final String user;
-    private final long createdAt;
     private final String type;
     private final String content;
+    private final long createdAt;
 
     /**
      * Create a new {@link MessageDTO} instance.
@@ -32,12 +33,13 @@ public class MessageDTO {
      * @param content
      *            The textual content of the message.
      */
-    public MessageDTO(String id, String user, long createdAt, String type, String content) {
+    public MessageDTO(final String id, final String user, final String type, final String content,
+            final long createdAt) {
         this.id = id;
         this.user = user;
-        this.createdAt = createdAt;
         this.type = type;
         this.content = content;
+        this.createdAt = createdAt;
     }
 
     /**
@@ -46,12 +48,12 @@ public class MessageDTO {
      * @param message
      *            The Message to be built as {@link MessageDTO}.
      */
-    public MessageDTO(Message message, String user) {
+    public MessageDTO(final Message message, final String user) {
         this.id = message.getId().toString();
         this.user = user;
-        this.createdAt = message.getCreatedAt().toEpochSecond(ZoneOffset.UTC);
         this.type = message.getType().name();
         this.content = message.getContent();
+        this.createdAt = message.getCreatedAt().toEpochSecond(ZoneOffset.UTC);
     }
 
     /**
@@ -74,18 +76,6 @@ public class MessageDTO {
     }
 
     /**
-     * Retrieve the creation time of the {@link MessageDTO} in seconds since
-     * unixepoch. {@link Message} stores a {@link LocalDateTime} WHILE
-     * {@link MessageDTO} stores the seconds since unixepoch.
-     *
-     * @return The creation time of the {@link MessageDTO} in seconds since
-     *         unixepoch.
-     */
-    public long getCreatedAt() {
-        return createdAt;
-    }
-
-    /**
      * Retrieve the {@link MessageType} of the {@link MessageDTO}.
      * {@link Message} stores a {@link MessageType} value, {@link MessageDTO}
      * only stores a {@link String} with the name.
@@ -103,6 +93,37 @@ public class MessageDTO {
      */
     public String getContent() {
         return content;
+    }
+
+    /**
+     * Retrieve the creation time of the {@link MessageDTO} in seconds since
+     * unixepoch. {@link Message} stores a {@link LocalDateTime} WHILE
+     * {@link MessageDTO} stores the seconds since unixepoch.
+     *
+     * @return The creation time of the {@link MessageDTO} in seconds since
+     *         unixepoch.
+     */
+    public long getCreatedAt() {
+        return createdAt;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, user, type, content, createdAt);
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final MessageDTO other = (MessageDTO) obj;
+        return Objects.equals(this.id, other.id) && Objects.equals(this.user, other.user)
+                && Objects.equals(this.type, other.type) && Objects.equals(this.content, other.content)
+                && Objects.equals(this.createdAt, other.createdAt);
     }
 
     @Override

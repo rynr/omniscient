@@ -2,6 +2,7 @@ package org.rjung.service.message;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -91,6 +92,24 @@ public class Message {
         return String.join("\t", getId().toString(),
                 String.valueOf(createdAt.toInstant(ZoneOffset.UTC).getEpochSecond()), type.getIdentifier(),
                 content.replaceAll("\n", "\\n"));
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, content, createdAt);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Message other = (Message) obj;
+        return Objects.equals(this.type, other.type) && Objects.equals(this.content, other.content)
+                && Objects.equals(this.createdAt, other.createdAt);
     }
 
     @Override
