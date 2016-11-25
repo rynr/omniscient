@@ -5,7 +5,7 @@ public class TagUsage {
     private final String tag;
     private final int count;
 
-    public TagUsage(String tag, int count) {
+    public TagUsage(final String tag, final int count) {
         this.tag = tag;
         this.count = count;
     }

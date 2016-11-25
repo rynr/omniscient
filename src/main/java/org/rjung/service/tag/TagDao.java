@@ -3,7 +3,6 @@ package org.rjung.service.tag;
 import java.sql.PreparedStatement;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -12,10 +11,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class TagDao {
 
-    @Autowired
-    JdbcTemplate jdbcTemplate;
+    final JdbcTemplate jdbcTemplate;
 
-    public TagDao(JdbcTemplate jdbcTemplate) {
+    public TagDao(final JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
@@ -23,7 +21,7 @@ public class TagDao {
         return jdbcTemplate.queryForList("SELECT name FROM tags ORDER BY name", String.class);
     }
 
-    public List<String> searchTags(String start) {
+    public List<String> searchTags(final String start) {
         return jdbcTemplate.queryForList("SELECT name FROM tags WHERE name LIKE ? ORDER BY name",
                 new Object[] { start + "%" }, String.class);
     }
@@ -34,12 +32,12 @@ public class TagDao {
                 (rs, rowNum) -> new TagUsage(rs.getString(1), rs.getInt(2)));
     }
 
-    public void insertTag(String tag, String messageId) {
+    public void insertTag(final String tag, final String messageId) {
         long tagId = getIdOfTag(tag);
         jdbcTemplate.update("INSERT INTO messages_tags (message_id, tag_id) VALUES (?, ?)", messageId, tagId);
     }
 
-    private long getIdOfTag(String tag) {
+    private long getIdOfTag(final String tag) {
         Integer numberOfTags = jdbcTemplate.queryForObject("SELECT COUNT(name) FROM tags WHERE name = ?",
                 new String[] { tag }, Integer.class);
         if (numberOfTags > 0) {

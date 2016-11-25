@@ -6,20 +6,22 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class TagService {
 
-    @Autowired
-    private TagDao tagDao;
+    private final TagDao tagDao;
+
+    public TagService(TagDao tagDao) {
+        this.tagDao = tagDao;
+    }
 
     public List<String> getTags() {
         return tagDao.getTags();
     }
 
-    public List<String> searchTags(String start) {
+    public List<String> searchTags(final String start) {
         return tagDao.searchTags(start);
     }
 
@@ -27,11 +29,11 @@ public class TagService {
         return tagDao.getTagUsage();
     }
 
-    public void insertTag(String tag, String messageId) {
+    public void insertTag(final String tag, final String messageId) {
         tagDao.insertTag(tag, messageId);
     }
 
-    public Set<String> getTagsFromMessage(String message) {
+    public Set<String> getTagsFromMessage(final String message) {
         Set<String> result = new HashSet<>();
         Pattern pattern = Pattern.compile("#([\\w]+)");
         Matcher matcher = pattern.matcher(message);

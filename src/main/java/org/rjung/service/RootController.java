@@ -12,7 +12,7 @@ public class RootController {
 
     @RequestMapping(value = "/")
     @ResponseStatus(value = HttpStatus.MOVED_PERMANENTLY)
-    public RedirectView getRoot(UriComponentsBuilder urlBuilder) {
+    public RedirectView getRoot(final UriComponentsBuilder urlBuilder) {
         return new RedirectView(urlBuilder.path("/messages.html").toUriString());
     }
 }

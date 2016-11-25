@@ -20,7 +20,7 @@ public class MessageDao {
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageDao.class);
 
     private final JdbcTemplate jdbcTemplate;
-    private MessageDTOMapper messageMapper;
+    private final MessageDTOMapper messageMapper;
 
     @Autowired
     MessageDao(final JdbcTemplate jdbcTemplate) {
@@ -81,7 +81,7 @@ public class MessageDao {
     private class MessageDTOMapper implements RowMapper<MessageDTO> {
 
         @Override
-        public MessageDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
+        public MessageDTO mapRow(final ResultSet rs, final int rowNum) throws SQLException {
             return new MessageDTO(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getLong(5));
         }
 

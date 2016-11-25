@@ -24,12 +24,12 @@ public class OmniscientApplication extends WebSecurityConfigurerAdapter {
      * @param args
      *            execution parameters.
      */
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         SpringApplication.run(OmniscientApplication.class, args);
     }
 
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    protected void configure(final HttpSecurity http) throws Exception {
         // @formatter:off
         http
             .antMatcher("/**")

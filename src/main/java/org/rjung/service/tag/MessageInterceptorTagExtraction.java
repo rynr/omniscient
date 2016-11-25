@@ -5,7 +5,6 @@ import java.util.regex.Pattern;
 
 import org.rjung.service.message.MessageDTO;
 import org.rjung.service.message.MessageInterceptor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -13,11 +12,14 @@ public class MessageInterceptorTagExtraction implements MessageInterceptor {
 
     private static final Pattern TAG_PATTERN = Pattern.compile("(?:^|\\s|[\\p{Punct}&&[^/]])(#[\\p{L}0-9-_]+)");
 
-    @Autowired
-    private TagDao tagDao;
+    private final TagDao tagDao;
+
+    public MessageInterceptorTagExtraction(TagDao tagDao) {
+        this.tagDao = tagDao;
+    }
 
     @Override
-    public void saveMessage(MessageDTO message) {
+    public void saveMessage(final MessageDTO message) {
         Matcher matcher = TAG_PATTERN.matcher(message.getContent());
         while (matcher.find()) {
             tagDao.insertTag(matcher.group(1), message.getId());
