@@ -124,5 +124,6 @@ public class MessageController {
     @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Not Found")
     @ExceptionHandler(EmptyResultDataAccessException.class)
     public void notFound() {
+        // Nothing to do
     }
 }
