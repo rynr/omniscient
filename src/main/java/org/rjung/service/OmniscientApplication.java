@@ -34,7 +34,7 @@ public class OmniscientApplication extends WebSecurityConfigurerAdapter {
         http
             .antMatcher("/**")
             .authorizeRequests()
-                .antMatchers("/")
+                .antMatchers("/", "/css/**")
                 .permitAll()
             .anyRequest()
                 .authenticated()

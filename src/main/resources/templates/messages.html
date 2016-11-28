@@ -10,12 +10,14 @@
     <link rel="stylesheet" href="css/main.css" />
   </head>
   <body>
-    <header>
+    <header th:fragment="header">
       <div class="wrapper">
         <h1>Log</h1>
         <nav>
           <ul>
-            <li sec:authentication="name"></li>
+            <li sec:authorize="isAuthenticated()" sec:authentication="name"></li>
+            <li sec:authorize="isAuthenticated()"><a href="root.html" th:href="'javascript:document.getElementById(\'logoutForm\').submit()'">logout</a><form id="logoutForm" action="/index.html" th:action="@{/logout}" method="post"></form></li>
+            <li sec:authorize="!isAuthenticated()"><a href="messages.html" th:href="@{/login}">login</a></li>
             <li><a href="messages.html" target="_self">↻</a></li>
           </ul>
         </nav>
