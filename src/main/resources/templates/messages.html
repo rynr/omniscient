@@ -16,8 +16,8 @@
         <nav>
           <ul>
             <li sec:authorize="isAuthenticated()" sec:authentication="name"></li>
-            <li sec:authorize="isAuthenticated()"><a href="root.html" th:href="'javascript:document.getElementById(\'logoutForm\').submit()'">logout</a><form id="logoutForm" action="/index.html" th:action="@{/logout}" method="post"></form></li>
-            <li sec:authorize="!isAuthenticated()"><a href="messages.html" th:href="@{/login}">login</a></li>
+            <li sec:authorize="isAuthenticated()"><a href="root.html" th:href="'javascript:document.getElementById(\'logoutForm\').submit()'" target="_self">logout</a><form id="logoutForm" action="/index.html" th:action="@{/logout}" method="post"></form></li>
+            <li sec:authorize="!isAuthenticated()"><a href="messages.html" th:href="@{/login}" target="_self">login</a></li>
             <li><a href="messages.html" target="_self">↻</a></li>
           </ul>
         </nav>
