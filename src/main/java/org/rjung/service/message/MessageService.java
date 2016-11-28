@@ -65,8 +65,7 @@ public class MessageService {
     public Message getMessage(final String id, final Principal principal) {
         LOGGER.debug("get message: " + id);
         MessageDTO message = messages.getMessage(id, principal.getName());
-        return message == null ? null
-                : new Message(MessageType.valueOf(message.getType()), message.getContent(),
+        return new Message(MessageType.valueOf(message.getType()), message.getContent(),
                         LocalDateTime.ofEpochSecond(message.getCreatedAt(), 0, ZoneOffset.UTC));
     }
 
