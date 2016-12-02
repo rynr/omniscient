@@ -14,7 +14,6 @@
       <header th:fragment="header">
         <nav>
           <ul>
-            <li><a href="messages.html" th:href="@{/messages.html}">omniscient</a></li>
             <li sec:authorize="isAuthenticated()"><b sec:authentication="name">username</b></li>
             <li sec:authorize="isAuthenticated()"><a href="root.html" th:href="'javascript:document.getElementById(\'logoutForm\').submit()'" target="_self">⨯</a><form id="logoutForm" action="/index.html" th:action="@{/logout}" method="post"></form></li>
             <li sec:authorize="!isAuthenticated()"><a href="messages.html" th:href="@{/login}" target="_self">👤</a></li>
