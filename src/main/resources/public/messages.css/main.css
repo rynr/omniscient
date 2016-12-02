@@ -7,7 +7,7 @@ body,html {
 input {
   width: 100%;
   outline: none;
-  padding: 2px 7px;
+  padding: 5px;
   margin: 0px 0px 5px;
   border: 1px solid #ddd;
 }
@@ -39,5 +39,18 @@ nav li a,b {
 }
 
 nav li a:hover {
-    background-color: #ccc;
+  background-color: #ccc;
+}
+
+table {
+  margin: 0.6em;
+}
+
+th {
+  text-align: left;
+}
+
+td {
+  vertical-align: top;
+  padding: 0.2em;
 }
