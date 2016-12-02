@@ -48,7 +48,7 @@ public class MessageService {
     public Page<Message> getMessages(Pageable page, final Principal principal) {
         LOGGER.debug("get message: principal " + principal);
         Page<MessageDTO> ms = messages.findByUserOrderByCreatedAtDesc(principal.getName(), page);
-        return new PageImpl<Message>(ms.getContent().stream()
+        return new PageImpl<>(ms.getContent().stream()
                 .map(m -> new Message(MessageType.valueOf(m.getType()), m.getContent(),
                         LocalDateTime.ofEpochSecond(m.getCreatedAt(), 0, ZoneOffset.UTC)))
                 .collect(Collectors.toList()), page, ms.getTotalPages());

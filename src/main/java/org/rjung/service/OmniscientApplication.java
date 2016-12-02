@@ -62,10 +62,10 @@ public class OmniscientApplication {
     @Bean
     public EmbeddedServletContainerCustomizer containerCustomizer() {
 
-        return (container -> {
+        return container -> {
             ErrorPage error404Page = new ErrorPage(HttpStatus.NOT_FOUND, "/404.html");
 
             container.addErrorPages(error404Page);
-        });
+        };
     }
 }
