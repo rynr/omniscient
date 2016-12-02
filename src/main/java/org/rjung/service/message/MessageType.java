@@ -32,6 +32,12 @@ public enum MessageType {
             return Collections.emptyMap();
         }
     },
+    DECISION("‼", Pattern.compile("\\A\\s*(‼|!)\\s*")) {
+        @Override
+        public Map<String, MessageType> getTransitions() {
+            return Collections.emptyMap();
+        }
+    },
     BOOKMARK("❯", Pattern.compile("\\A\\s*(❯|>)\\s*")) {
         @Override
         public Map<String, MessageType> getTransitions() {
