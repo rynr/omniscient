@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Objects;
 
+import org.springframework.core.style.ToStringCreator;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
@@ -144,6 +145,7 @@ public class MessageDTO {
 
     @Override
     public String toString() {
-        return String.join("\t", id, String.valueOf(createdAt), type, content);
+        return new ToStringCreator(this).append("id", id).append("user", user).append("type", type)
+                .append("content", content).append("createdAt", createdAt).toString();
     }
 }

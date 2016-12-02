@@ -5,6 +5,8 @@ import java.time.ZoneOffset;
 import java.util.Objects;
 import java.util.UUID;
 
+import org.springframework.core.style.ToStringCreator;
+
 /**
  * A {@link Message} is the root object in omniscient. If not available a
  * creation-date will be derived of the current timestamp.
@@ -114,7 +116,7 @@ public class Message {
 
     @Override
     public String toString() {
-        return "Message[id=" + getId().toString() + ", created-at='" + createdAt.toString() + "', type=" + type.name()
-                + ", message:'" + content.replaceAll("\n", "\\n") + "']";
+        return new ToStringCreator(this).append("type", type).append("content", content).append("createdAt", createdAt)
+                .toString();
     }
 }
