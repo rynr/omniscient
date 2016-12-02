@@ -25,6 +25,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -46,24 +48,22 @@ public class MessageControllerTest {
 
     @Test
     public void verifyGetMessagesTextDelegatesToService() {
-        int page = randomInt(200);
-        int size = randomInt(200);
-        PageRequest pageable = new PageRequest(page, size);
+        PageRequest page = randomPage();
         Principal principal = randomPrincipal();
-        int expectedResults = randomInt(size);
+        int expectedResults = randomInt(page.getPageSize());
         Page<Message> expectedResult = new PageImpl<>(
-                IntStream.range(0, expectedResults).mapToObj(i -> randomMessage()).collect(Collectors.toList()),
-                pageable, size + randomInt(400));
-        when(messageService.getMessages(pageable, principal)).thenReturn(expectedResult);
+                IntStream.range(0, expectedResults).mapToObj(i -> randomMessage()).collect(Collectors.toList()), page,
+                page.getPageSize() + randomInt(400));
+        when(messageService.getMessages(page, principal)).thenReturn(expectedResult);
 
-        ResponseEntity<String> result = sut.getMessagesText(pageable, principal);
+        ResponseEntity<String> result = sut.getMessagesText(page, principal);
 
         assertThat(result.getStatusCode(), is(HttpStatus.OK));
         assertThat(result.getBody().split("\n").length, is(expectedResults));
         // Perhaps there's a better way than doing the same as in the sut.
         assertThat(result.getBody(),
                 is(expectedResult.getContent().stream().map(m -> m.export()).collect(Collectors.joining("\n"))));
-        verify(messageService).getMessages(pageable, principal);
+        verify(messageService).getMessages(page, principal);
         verifyNoMoreInteractions(messageService);
     }
 
@@ -99,5 +99,47 @@ public class MessageControllerTest {
                 is("https://www.example.com/messages/" + message.getId() + ".txt"));
         verify(messageService).save(source, principal);
         verifyNoMoreInteractions(messageService);
+    }
+
+    @Test
+    public void verifyGetMessagesHtmlDelegatesToService() {
+        PageRequest page = randomPage();
+        Principal principal = randomPrincipal();
+        int expectedResults = randomInt(page.getPageSize());
+        Page<Message> expectedResult = new PageImpl<>(
+                IntStream.range(0, expectedResults).mapToObj(i -> randomMessage()).collect(Collectors.toList()), page,
+                page.getPageSize() + randomInt(400));
+        when(messageService.getMessages(page, principal)).thenReturn(expectedResult);
+
+        ModelAndView result = sut.getMessagesHtml(page, principal);
+
+        assertThat(result.getViewName(), is("messages"));
+        assertThat(result.getModel().get("messages"), is(expectedResult));
+        verify(messageService).getMessages(page, principal);
+        verifyNoMoreInteractions(messageService);
+    }
+
+    @Test
+    public void verifyPostMessageHtmlDelegatesToService() {
+        MessageType messageType = randomEnum(MessageType.values());
+        String messageBody = randomString(12);
+        String source = messageType.getIdentifier() + " " + messageBody;
+        Message message = new Message(messageType, messageBody);
+        Principal principal = randomPrincipal();
+        when(messageService.save(source, principal)).thenReturn(message.getId().toString());
+
+        RedirectView response = sut.postMessageHtml(source,
+                UriComponentsBuilder.fromHttpUrl("https://www.example.com/"), principal);
+
+        assertThat(response.getUrl(), is("https://www.example.com/messages.html"));
+        verify(messageService).save(source, principal);
+        verifyNoMoreInteractions(messageService);
+
+    }
+
+    private PageRequest randomPage() {
+        int page = randomInt(200);
+        int size = randomInt(200);
+        return new PageRequest(page, size);
     }
 }

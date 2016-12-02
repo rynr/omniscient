@@ -23,4 +23,20 @@ public class MessageDTOTest {
         assertEquals(messageDTO.getType(), message.getType().name());
         assertEquals(messageDTO.getCreatedAt(), message.getCreatedAt().toEpochSecond(ZoneOffset.UTC));
     }
+
+    @Test
+    public void verifyEqualsVerifiesSameContent() {
+        Message message = randomMessage();
+        String user = randomString(36);
+
+        assertEquals(new MessageDTO(message, user), new MessageDTO(message, user));
+    }
+
+    @Test
+    public void verifyHashCodeVerifiesSameContent() {
+        Message message = randomMessage();
+        String user = randomString(36);
+
+        assertEquals(new MessageDTO(message, user).hashCode(), new MessageDTO(message, user).hashCode());
+    }
 }
