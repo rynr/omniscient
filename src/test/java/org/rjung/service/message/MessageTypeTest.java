@@ -27,12 +27,14 @@ public class MessageTypeTest {
 
         assertThat(type.match(" i  todo"), is(false));
         assertThat(type.match(" I  done"), is(false));
+        assertThat(type.match(" !  descision"), is(false));
         assertThat(type.match("[ ] todo"), is(false));
         assertThat(type.match("[x] done"), is(false));
         assertThat(type.match("[X] done"), is(false));
         assertThat(type.match(" >  bookmark"), is(false));
         assertThat(type.match(" $  snippet"), is(false));
         assertThat(type.match("ℹ done"), is(false));
+        assertThat(type.match("‼ descision"), is(false));
         assertThat(type.match("☐ todo"), is(false));
         assertThat(type.match("☑ done"), is(false));
         assertThat(type.match("❯  bookmark"), is(false));
@@ -61,11 +63,41 @@ public class MessageTypeTest {
         assertThat(type.match("[ ] todo"), is(false));
         assertThat(type.match("[x] done"), is(false));
         assertThat(type.match("[X] done"), is(false));
+        assertThat(type.match(" !  descision"), is(false));
         assertThat(type.match(" >  bookmark"), is(false));
         assertThat(type.match(" $  snippet"), is(false));
+        assertThat(type.match("‼ descision"), is(false));
         assertThat(type.match("☐ todo"), is(false));
         assertThat(type.match("☑ done"), is(false));
-        assertThat(type.match("❯  bookmark"), is(false));
+        assertThat(type.match("❯ bookmark"), is(false));
+        assertThat(type.match("📖 snippet"), is(false));
+    }
+
+    @Test
+    public void verifyDescisionMatches() {
+        MessageType type = MessageType.DECISION;
+        assertThat(type.match("!descision"), is(true));
+        assertThat(type.match("! descision"), is(true));
+        assertThat(type.match(" !descision"), is(true));
+        assertThat(type.match(" ! descision"), is(true));
+        assertThat(type.match("      !        descision"), is(true));
+        assertThat(type.match("‼descision"), is(true));
+        assertThat(type.match("‼ descision"), is(true));
+        assertThat(type.match(" ‼descision"), is(true));
+        assertThat(type.match(" ‼ descision"), is(true));
+        assertThat(type.match("      ‼        descision"), is(true));
+
+        assertThat(type.match("[ ] todo"), is(false));
+        assertThat(type.match("[x] done"), is(false));
+        assertThat(type.match("[X] done"), is(false));
+        assertThat(type.match(" i  info"), is(false));
+        assertThat(type.match(" I  info"), is(false));
+        assertThat(type.match(" >  bookmark"), is(false));
+        assertThat(type.match(" $  snippet"), is(false));
+        assertThat(type.match("ℹ done"), is(false));
+        assertThat(type.match("☐ todo"), is(false));
+        assertThat(type.match("☑ done"), is(false));
+        assertThat(type.match("❯ bookmark"), is(false));
         assertThat(type.match("📖 snippet"), is(false));
     }
 
@@ -85,12 +117,14 @@ public class MessageTypeTest {
         assertThat(type.match(" -  log"), is(false));
         assertThat(type.match(" i  todo"), is(false));
         assertThat(type.match(" I  done"), is(false));
+        assertThat(type.match(" !  descision"), is(false));
+        assertThat(type.match(" ‼  descision"), is(false));
         assertThat(type.match("[ ] todo"), is(false));
         assertThat(type.match("[x] done"), is(false));
         assertThat(type.match("[X] done"), is(false));
         assertThat(type.match(" $  snippet"), is(false));
         assertThat(type.match("≣ log"), is(false));
-        assertThat(type.match("ℹ done"), is(false));
+        assertThat(type.match("ℹ  done"), is(false));
         assertThat(type.match("☐ todo"), is(false));
         assertThat(type.match("☑ done"), is(false));
         assertThat(type.match("¶ snippet"), is(false));
@@ -118,14 +152,16 @@ public class MessageTypeTest {
         assertThat(type.match(" -  log"), is(false));
         assertThat(type.match(" i  todo"), is(false));
         assertThat(type.match(" I  done"), is(false));
+        assertThat(type.match(" !  descision"), is(false));
+        assertThat(type.match(" ‼  descision"), is(false));
         assertThat(type.match("[x] done"), is(false));
         assertThat(type.match("[X] done"), is(false));
         assertThat(type.match(" >  bookmark"), is(false));
         assertThat(type.match(" $  snippet"), is(false));
         assertThat(type.match("≣ log"), is(false));
-        assertThat(type.match("ℹ done"), is(false));
+        assertThat(type.match("ℹ  done"), is(false));
         assertThat(type.match("☑ done"), is(false));
-        assertThat(type.match("❯  bookmark"), is(false));
+        assertThat(type.match("❯ bookmark"), is(false));
         assertThat(type.match("¶ snippet"), is(false));
     }
 
@@ -151,13 +187,15 @@ public class MessageTypeTest {
         assertThat(type.match(" -  log"), is(false));
         assertThat(type.match(" i  todo"), is(false));
         assertThat(type.match(" I  done"), is(false));
+        assertThat(type.match(" !  descision"), is(false));
+        assertThat(type.match(" ‼  descision"), is(false));
         assertThat(type.match("[ ] todo"), is(false));
         assertThat(type.match(" >  bookmark"), is(false));
         assertThat(type.match(" $  snippet"), is(false));
         assertThat(type.match("≣ log"), is(false));
-        assertThat(type.match("ℹ done"), is(false));
+        assertThat(type.match("ℹ  done"), is(false));
         assertThat(type.match("☐ todo"), is(false));
-        assertThat(type.match("❯  bookmark"), is(false));
+        assertThat(type.match("❯ bookmark"), is(false));
         assertThat(type.match("¶ snippet"), is(false));
     }
 
@@ -176,12 +214,14 @@ public class MessageTypeTest {
         assertThat(type.match("      $        message"), is(true));
 
         assertThat(type.match(" -  log"), is(false));
+        assertThat(type.match(" !  descision"), is(false));
         assertThat(type.match("[ ] todo"), is(false));
         assertThat(type.match("[x] done"), is(false));
         assertThat(type.match("[X] done"), is(false));
         assertThat(type.match(" >  bookmark"), is(false));
         assertThat(type.match("≣ log"), is(false));
-        assertThat(type.match("ℹ done"), is(false));
+        assertThat(type.match("ℹ  done"), is(false));
+        assertThat(type.match("‼ descision"), is(false));
         assertThat(type.match("☐ todo"), is(false));
         assertThat(type.match("☑ done"), is(false));
         assertThat(type.match("❯ bookmark"), is(false));
