@@ -6,6 +6,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,8 +30,8 @@ import org.springframework.web.util.UriComponentsBuilder;
  */
 @RestController
 public class MessageController {
-    private static final String DEFAULT_PAGE = "1";
-    private static final String DEFAULT_LIMIT = "100";
+    private static final int DEFAULT_PAGE = 1;
+    private static final int DEFAULT_SIZE = 100;
 
     final MessageService messages;
 
@@ -59,11 +62,9 @@ public class MessageController {
      *         text-representation.
      */
     @RequestMapping(value = "/messages.txt", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
-    public ResponseEntity<String> getMessagesText(
-            @RequestParam(value = "page", required = false, defaultValue = DEFAULT_PAGE) final int page,
-            @RequestParam(value = "limit", required = false, defaultValue = DEFAULT_LIMIT) final int limit,
-            final Principal principal) {
-        return new ResponseEntity<>(messages.getMessages(page, limit, principal).stream().map(Message::export)
+    public ResponseEntity<String> getMessagesText(@PageableDefault(page = DEFAULT_PAGE, size = DEFAULT_SIZE, sort = {
+            "created-at" }, direction = Direction.DESC) Pageable page, final Principal principal) {
+        return new ResponseEntity<>(messages.getMessages(page, principal).getContent().stream().map(Message::export)
                 .collect(Collectors.joining("\n")), HttpStatus.OK);
     }
 
@@ -105,12 +106,9 @@ public class MessageController {
     }
 
     @RequestMapping(value = "/messages.html", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
-    public ModelAndView getMessagesHtml(
-            @RequestParam(value = "page", required = false, defaultValue = DEFAULT_PAGE) final int page,
-            @RequestParam(value = "limit", required = false, defaultValue = DEFAULT_LIMIT) final int limit,
-            final Principal principal) {
+    public ModelAndView getMessagesHtml(final Pageable page, final Principal principal) {
         return new ModelAndView("messages",
-                Stream.of(new SimpleEntry<>("messages", messages.getMessages(page, limit, principal)))
+                Stream.of(new SimpleEntry<>("messages", messages.getMessages(page, principal)))
                         .collect(Collectors.toMap(SimpleEntry::getKey, SimpleEntry::getValue)));
     }
 

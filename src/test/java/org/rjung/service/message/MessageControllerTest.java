@@ -12,7 +12,6 @@ import static org.rjung.service.helper.TestHelper.randomPrincipal;
 import static org.rjung.service.helper.TestHelper.randomString;
 
 import java.security.Principal;
-import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -21,6 +20,9 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -45,21 +47,23 @@ public class MessageControllerTest {
     @Test
     public void verifyGetMessagesTextDelegatesToService() {
         int page = randomInt(200);
-        int limit = randomInt(200);
+        int size = randomInt(200);
+        PageRequest pageable = new PageRequest(page, size);
         Principal principal = randomPrincipal();
-        int expectedResults = randomInt(limit);
-        List<Message> expectedResult = IntStream.range(0, expectedResults).mapToObj(i -> randomMessage())
-                .collect(Collectors.toList());
-        when(messageService.getMessages(page, limit, principal)).thenReturn(expectedResult);
+        int expectedResults = randomInt(size);
+        Page<Message> expectedResult = new PageImpl<>(
+                IntStream.range(0, expectedResults).mapToObj(i -> randomMessage()).collect(Collectors.toList()),
+                pageable, size + randomInt(400));
+        when(messageService.getMessages(pageable, principal)).thenReturn(expectedResult);
 
-        ResponseEntity<String> result = sut.getMessagesText(page, limit, principal);
+        ResponseEntity<String> result = sut.getMessagesText(pageable, principal);
 
         assertThat(result.getStatusCode(), is(HttpStatus.OK));
         assertThat(result.getBody().split("\n").length, is(expectedResults));
         // Perhaps there's a better way than doing the same as in the sut.
         assertThat(result.getBody(),
-                is(expectedResult.stream().map(m -> m.export()).collect(Collectors.joining("\n"))));
-        verify(messageService).getMessages(page, limit, principal);
+                is(expectedResult.getContent().stream().map(m -> m.export()).collect(Collectors.joining("\n"))));
+        verify(messageService).getMessages(pageable, principal);
         verifyNoMoreInteractions(messageService);
     }
 

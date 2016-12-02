@@ -4,16 +4,30 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Objects;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldIndex;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * The {@link MessageDTO} contains the data of a {@link Message} to be stored in
  * the database.
  */
+@Document(indexName = "messages", type = "message")
 public class MessageDTO {
 
+    @Id
     private final String id;
+    @Field(index = FieldIndex.not_analyzed, store = false)
     private final String user;
+    @Field(index = FieldIndex.not_analyzed, store = true)
     private final String type;
+    @Field(index = FieldIndex.analyzed, store = true)
     private final String content;
+    @Field(index = FieldIndex.not_analyzed, store = true)
     private final long createdAt;
 
     /**
@@ -33,8 +47,10 @@ public class MessageDTO {
      * @param content
      *            The textual content of the message.
      */
-    public MessageDTO(final String id, final String user, final String type, final String content,
-            final long createdAt) {
+    @JsonCreator
+    public MessageDTO(@JsonProperty("id") final String id, @JsonProperty("user") final String user,
+            @JsonProperty("type") final String type, @JsonProperty("content") final String content,
+            @JsonProperty("createdAt") final long createdAt) {
         this.id = id;
         this.user = user;
         this.type = type;

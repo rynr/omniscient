@@ -22,23 +22,14 @@
           </ul>
         </nav>
       </header>
-      <div>
-        <form action="#" th:action="@{/messages.html}" method="post">
-          <input name="message" autofocus="autofocus"/>
-        </form>
-      </div>
-      <table><th:block th:each="message,iterStat : ${messages.getContent()}">
-        <tr th:if="${iterStat.index} == 0 or ( ${messages.getContent().get(iterStat.index - 1).createdAt.toLocalDate()} != ${message.createdAt.toLocalDate()})">
-          <th colspan="3" th:text="${message.createdAt.toLocalDate()}"></th>
-        </tr>
-        <tr>
-          <td th:text="${message.type.identifier}">(i)</td>
-          <td>
-            <span th:text="${message.content}"></span>
-            <small th:text="${message.createdAt.toLocalTime()}"></small>
-          </td>
-        </tr></th:block>
-      </table>
+<pre>  _______________
+/                \
+| File not found |
+\_ ______________/
+  v
+  _      _      _      _      _      _      _      _      _      _      _      _
+>(.)__ <(.)__ <(.)__ >(.)__ <(.)__ <(.)__ <(.)__ <(.)__ <(.)__ <(.)__ <(.)__ <(.)__
+ (___/  (___/  (___/  (___/  (___/  (___/  (___/  (___/  (___/  (___/  (___/  (___/</pre>
     </div>
   </body>
 </html>

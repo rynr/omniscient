@@ -3,11 +3,13 @@ package org.rjung.service.message;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 /**
@@ -18,12 +20,10 @@ public class MessageService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageService.class);
 
-    private final MessageDao messages;
-    private final List<MessageInterceptor> messageInterceptors;
+    private final MessageRepository messages;
 
-    public MessageService(final MessageDao messages, final List<MessageInterceptor> messageInterceptors) {
+    public MessageService(final MessageRepository messages) {
         this.messages = messages;
-        this.messageInterceptors = messageInterceptors;
     }
 
     /**
@@ -45,28 +45,30 @@ public class MessageService {
      *         available or the <tt>page</tt> is to high, there will be no
      *         results in the list.
      */
-    public List<Message> getMessages(final int page, final int limit, final Principal principal) {
-        LOGGER.debug("get message: page " + page + ", limit " + limit + ", principal " + principal);
-        return messages.getMessages(page, limit, principal.getName()).stream()
+    public Page<Message> getMessages(Pageable page, final Principal principal) {
+        LOGGER.debug("get message: principal " + principal);
+        Page<MessageDTO> ms = messages.findByUserOrderByCreatedAtDesc(principal.getName(), page);
+        return new PageImpl<Message>(ms.getContent().stream()
                 .map(m -> new Message(MessageType.valueOf(m.getType()), m.getContent(),
                         LocalDateTime.ofEpochSecond(m.getCreatedAt(), 0, ZoneOffset.UTC)))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()), page, ms.getTotalPages());
+
     }
 
     /**
      * Get a {@link Message}s.
      *
-     * @param id
-     *            The method will return one {@link Message} (if available) with
-     *            the given <tt>id</tt>.
      * @param principal
-     * @return The {@link Message} if available.
+     *            The user of the {@link Message}s to be retrieved.
+     * @return A list with maximum <tt>limit</tt> {@link Message}s. If none are
+     *         available or the <tt>page</tt> is to high, there will be no
+     *         results in the list.
      */
-    public Message getMessage(final String id, final Principal principal) {
-        LOGGER.debug("get message: " + id);
-        MessageDTO message = messages.getMessage(id, principal.getName());
+    public Message getMessage(String id, final Principal principal) {
+        LOGGER.debug("get message: principal " + principal);
+        MessageDTO message = messages.findOneByIdAndUser(id, principal.getName());
         return new Message(MessageType.valueOf(message.getType()), message.getContent(),
-                        LocalDateTime.ofEpochSecond(message.getCreatedAt(), 0, ZoneOffset.UTC));
+                LocalDateTime.ofEpochSecond(message.getCreatedAt(), 0, ZoneOffset.UTC));
     }
 
     /**
@@ -91,8 +93,7 @@ public class MessageService {
             message = new Message(type, type.clearMessage(source));
         }
         MessageDTO messageDTO = new MessageDTO(message, principal.getName());
-        messages.save(messageDTO);
-        messageInterceptors.forEach(i -> i.saveMessage(messageDTO));
+        messages.index(messageDTO);
         return message.getId().toString();
 
     }

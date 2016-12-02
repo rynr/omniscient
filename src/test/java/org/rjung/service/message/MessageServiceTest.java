@@ -22,14 +22,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.rjung.service.helper.TestHelper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MessageServiceTest {
 
     @Mock
-    private MessageDao messageDao;
-    @Mock
-    private List<MessageInterceptor> messageInceptors;
+    private MessageRepository messageRepository;
     @InjectMocks
     private MessageService sut;
 
@@ -38,15 +39,16 @@ public class MessageServiceTest {
 
     @Test
     public void verifyGetMessages() {
-        List<MessageDTO> daoResult = Arrays.asList(TestHelper.randomMessageDTO());
         int page = randomInt(200);
         int limit = randomInt(200);
+        PageRequest paging = new PageRequest(page, limit);
+        Page<MessageDTO> daoResult = new PageImpl<>(Arrays.asList(TestHelper.randomMessageDTO()), paging, 1);
         Principal user = randomPrincipal();
-        when(messageDao.getMessages(page, limit, user.getName())).thenReturn(daoResult);
+        when(messageRepository.findByUserOrderByCreatedAtDesc(user.getName(), paging)).thenReturn(daoResult);
 
-        List<Message> result = sut.getMessages(page, limit, user);
+        Page<Message> result = sut.getMessages(paging, user);
 
-        verify(messageDao).getMessages(page, limit, user.getName());
+        verify(messageRepository).findByUserOrderByCreatedAtDesc(user.getName(), paging);
         verifySameResult(result, daoResult);
     }
 
@@ -54,11 +56,12 @@ public class MessageServiceTest {
     public void verifyGetMessage() {
         MessageDTO expectedResult = TestHelper.randomMessageDTO();
         Principal principal = randomPrincipal();
-        when(messageDao.getMessage(expectedResult.getId(), principal.getName())).thenReturn(expectedResult);
+        when(messageRepository.findOneByIdAndUser(expectedResult.getId(), principal.getName()))
+                .thenReturn(expectedResult);
 
         Message result = sut.getMessage(expectedResult.getId(), principal);
 
-        verify(messageDao).getMessage(expectedResult.getId(), principal.getName());
+        verify(messageRepository).findOneByIdAndUser(expectedResult.getId(), principal.getName());
         assertThat(result, is(new Message(MessageType.valueOf(expectedResult.getType()), expectedResult.getContent(),
                 LocalDateTime.ofEpochSecond(expectedResult.getCreatedAt(), 0, ZoneOffset.UTC))));
     }
@@ -69,7 +72,7 @@ public class MessageServiceTest {
 
         sut.save("log", principal);
 
-        verify(messageDao).save(captor.capture());
+        verify(messageRepository).index(captor.capture());
         MessageDTO message = captor.getValue();
         assertThat(message.getUser(), equalTo(principal.getName()));
         assertThat(message.getType(), equalTo(MessageType.LOG.name()));
@@ -82,18 +85,24 @@ public class MessageServiceTest {
 
         sut.save("[] todo", principal);
 
-        verify(messageDao).save(captor.capture());
+        verify(messageRepository).index(captor.capture());
         MessageDTO message = captor.getValue();
         assertThat(message.getUser(), equalTo(principal.getName()));
         assertThat(message.getType(), equalTo(MessageType.TODO.name()));
         assertThat(message.getContent(), equalTo("todo"));
     }
 
-    private void verifySameResult(List<Message> result, List<MessageDTO> daoResult) {
-        assertThat(result.size(), equalTo(daoResult.size()));
-        for (int i = 0; i < result.size(); i++) {
-            Message message = result.get(i);
-            MessageDTO messageDTO = daoResult.get(i);
+    private void verifySameResult(Page<Message> result, Page<MessageDTO> daoResult) {
+        assertThat(result.getSize(), equalTo(daoResult.getSize()));
+        assertThat(result.getNumber(), equalTo(daoResult.getNumber()));
+        assertThat(result.getNumberOfElements(), equalTo(daoResult.getNumberOfElements()));
+        assertThat(result.getTotalElements(), equalTo(daoResult.getTotalElements()));
+        assertThat(result.getTotalPages(), equalTo(daoResult.getTotalPages()));
+        List<Message> content = result.getContent();
+        List<MessageDTO> daoContent = daoResult.getContent();
+        for (int i = 0; i < content.size(); i++) {
+            Message message = content.get(i);
+            MessageDTO messageDTO = daoContent.get(i);
             assertThat(message.getContent(), equalTo(messageDTO.getContent()));
             assertThat(message.getType().name(), equalTo(messageDTO.getType()));
             assertThat(message.getCreatedAt().toEpochSecond(ZoneOffset.UTC), equalTo(messageDTO.getCreatedAt()));
