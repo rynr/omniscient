@@ -12,10 +12,10 @@
   <body>
     <div class="wrapper">
       <header th:fragment="header">
-        <h1>Log</h1>
         <nav>
           <ul>
-            <li sec:authorize="isAuthenticated()" sec:authentication="name"></li>
+            <li><a href="messages.html" th:href="@{/messages.html}">omniscient</a></li>
+            <li sec:authorize="isAuthenticated()"><b sec:authentication="name">username</b></li>
             <li sec:authorize="isAuthenticated()"><a href="root.html" th:href="'javascript:document.getElementById(\'logoutForm\').submit()'" target="_self">⨯</a><form id="logoutForm" action="/index.html" th:action="@{/logout}" method="post"></form></li>
             <li sec:authorize="!isAuthenticated()"><a href="messages.html" th:href="@{/login}" target="_self">👤</a></li>
             <li><a href="https://github.com/rynr/omniscient/wiki">❓</a></li>
