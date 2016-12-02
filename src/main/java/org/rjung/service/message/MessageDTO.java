@@ -9,6 +9,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldIndex;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -22,13 +23,13 @@ public class MessageDTO {
 
     @Id
     private final String id;
-    @Field(index = FieldIndex.not_analyzed, store = false)
+    @Field(index = FieldIndex.not_analyzed, store = false, type = FieldType.String)
     private final String user;
-    @Field(index = FieldIndex.not_analyzed, store = true)
+    @Field(index = FieldIndex.not_analyzed, store = true, type = FieldType.String)
     private final String type;
-    @Field(index = FieldIndex.analyzed, store = true)
+    @Field(index = FieldIndex.analyzed, store = true, type = FieldType.String)
     private final String content;
-    @Field(index = FieldIndex.not_analyzed, store = true)
+    @Field(index = FieldIndex.not_analyzed, store = true, type = FieldType.Long)
     private final long createdAt;
 
     /**

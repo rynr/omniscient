@@ -6,8 +6,8 @@
     <title>omniscient</title>
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="css/normalize.min.css" />
-    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="messages.css/normalize.min.css" />
+    <link rel="stylesheet" href="messages.css/main.css" />
   </head>
   <body>
     <div class="wrapper">
@@ -18,7 +18,7 @@
             <li sec:authorize="isAuthenticated()" sec:authentication="name"></li>
             <li sec:authorize="isAuthenticated()"><a href="root.html" th:href="'javascript:document.getElementById(\'logoutForm\').submit()'" target="_self">⨯</a><form id="logoutForm" action="/index.html" th:action="@{/logout}" method="post"></form></li>
             <li sec:authorize="!isAuthenticated()"><a href="messages.html" th:href="@{/login}" target="_self">👤</a></li>
-            <li><a href="http://rynr.github.io/omniscient/">❓</a></li>
+            <li><a href="https://github.com/rynr/omniscient/wiki">❓</a></li>
             <li><a href="messages.html" target="_self">🗘</a></li>
           </ul>
         </nav>
